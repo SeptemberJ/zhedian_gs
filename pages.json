@@ -1,0 +1,53 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#6DA977",
+				"navigationBarTextStyle": "white"
+				// "navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/module/index",
+			"style": {
+				"navigationBarTitleText": "菜单",
+				"navigationBarBackgroundColor": "#6DA977",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/insert/index",
+			"style": {
+				"navigationBarTitleText": "记录列表",
+				"navigationBarBackgroundColor": "#6DA977",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/list/index",
+			"style": {
+				"navigationBarTitleText": "新增",
+				"navigationBarBackgroundColor": "#6DA977",
+				"navigationBarTextStyle": "white"
+			}
+		}
+	],
+	"subPackages": [],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "复盛",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF",
+		"mp-alipay": {
+			"titleBarColor": "#FFFFFF"
+		}
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#007AFF",
+		"borderStyle": "black",
+		"backgroundColor": "#387DB3" // #79B2D8
+		}
+}
