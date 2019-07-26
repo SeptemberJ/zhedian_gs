@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "新增",
+  "navigationBarBackgroundColor": "#6DA977",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "uni-pagination": "/components/uni-pagination/uni-pagination"
+  }
+}

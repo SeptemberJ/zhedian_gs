@@ -12,7 +12,7 @@
 				<view class="IconWrap">
 					<image src="../../static/images/edit.png" class="inputIcon"></image>
 				</view>
-				<text>新增工时{{userInfo.fempid}}</text>
+				<text>新增工时</text>
 			</view>
 		</view>
 	</view>

@@ -8,11 +8,11 @@
 			<view class="InputWrap">
 				<view class="InputItem">
 					<text>用户名</text>
-					<input class="uni-input" v-model="username" placeholder="" style="border-bottom: 1px solid #000000;"/>
+					<input class="uni-input" v-model="username" placeholder="请输入用户名" style="border-bottom: 1px solid #000000;"/>
 				</view>
 				<view class="InputItem">
 					<text>密码</text>
-					<input class="uni-input" v-model="password" placeholder=""/>
+					<input class="uni-input" v-model="password" password placeholder="请输入密码"/>
 				</view>
 				<view class="LoginBt" @click="Login">
 					<text>登 陆</text>
@@ -28,8 +28,8 @@
 	export default {
 		data() {
 			return {
-				username: '丁广', // 丁广 administrator
-				password: 'Zhedian@123'
+				username: '潘晨星', // 丁广 administrator
+				password: '11' // Zhedian@123
 			}
 		},
 		computed: {
@@ -58,7 +58,46 @@
 				}
 				this.loginRequest('ja_login')
 			},
-			loginRequest (SOAPAction) {
+			loginRequest () {
+				uni.showLoading({
+					title: '加载中'
+				})
+				uni.request({
+					url: this.urlPre + '/userLogin?fname='+ this.username + '&password=' + this.password,
+					// url: this.urlPre + '/userLogin?fname=潘晨星&password=11',
+					method: 'POST',
+					success: (res) => {
+						console.log(this.username)
+						console.log(this.password)
+						console.log(res.data)
+						switch (res.data.code) {
+							case 1:
+								// 更新用户信息
+								this.updateUserInfo({'fempid': res.data.memberInfo.FItemID})
+								uni.redirectTo({
+									url: '/pages/module/index'
+								})
+								uni.hideLoading()
+								break
+							  default:
+								uni.hideLoading()
+								uni.showToast({
+								    image: '/static/images/attention.png',
+								    title: res.data.message + '!'
+								})
+						}
+					},
+					fail: (err) => {
+						console.log('request fail', err)
+						uni.hideLoading()
+						uni.showModal({
+							content: err.errMsg,
+							showCancel: false
+						});
+					}
+				})
+			},
+			loginRequest2 (SOAPAction) {
 				uni.showLoading({
 					title: '加载中'
 				})
@@ -84,13 +123,16 @@
 					data: tmpData,
 					success: (res) => {
 						let xml = res.data
+						console.log('xml------------')
+						console.log(xml)
 						let parser = new DOMParser()
 						let xmlDoc = parser.parseFromString(xml, 'text/xml')
+						
 						// 提取数据
 						let Result = xmlDoc.getElementsByTagName('ja_loginResponse')[0].getElementsByTagName('ja_loginResult')[0]
 						let HtmlStr = $(Result).html()
 						let result = JSON.parse(HtmlStr)
-						console.log(result)
+						// console.log(result)
 						switch (result.status) {
 							case '1':
 								// 更新用户信息

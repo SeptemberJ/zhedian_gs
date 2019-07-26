@@ -1,0 +1,125 @@
+
+.LoginWrap{
+	width: 100vw;
+	height: 100vh;
+	background: #6DA977;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+	overflow: hidden;
+}
+.TopBlock, .BotBlock{
+	width: 100vw;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center!important;
+	-webkit-justify-content: center!important;
+	    -ms-flex-pack: center!important;
+	        justify-content: center!important;
+	-webkit-box-align: center!important;
+	-webkit-align-items: center!important;
+	    -ms-flex-align: center!important;
+	        align-items: center!important;
+}
+.TopBlock{
+	height: 40vh;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+}
+.TopBlock text{
+	font-size: 72rpx;
+	color: #ffffff;
+	margin-top: 20rpx;
+}
+.TopBlock .Logo{
+	width: 250rpx;
+	height: 250rpx;
+}
+.BotBlock{
+	height: 60vh;
+}
+.BotBlock .InputWrap{
+	width: 600rpx;
+	height: 400rpx;
+	padding-top: 35rpx;
+	background: #FFFFFF;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+}
+.InputItem{
+	height: 150rpx;
+	padding: 20rpx 55rpx 0 55rpx;
+	overflow: hidden;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+}
+.InputItem text{
+	color: grey;
+}
+.LoginBt{
+	height: 100rpx;
+	font-weight: bold;
+	background: #BCE1C3;
+	padding: 0 55rpx;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	    -ms-flex-pack: justify;
+	        justify-content: space-between;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+}
+.LoginArrow{
+	width: 60rpx;
+	height: 60rpx;
+}
+.uni-input{
+	padding: 7rpx 0 !important;
+}
+.uni-input-placeholder{
+	color: #000000 !important;
+}
+	
+

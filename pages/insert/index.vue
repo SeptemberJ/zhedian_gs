@@ -52,14 +52,15 @@
 		data() {
 			return {
 				ifNoWork: false,
-				checkno: 'XSHT002848',
-				dateTxt: '2019-07-28',
-				supplier: '张三',
-				listData: [],
-				testObj: {
-					sname: '静态',
-					dname: '动态'
-				}
+				mohuResult: [],
+				// checkno: 'XSHT002848',
+				// dateTxt: '2019-07-28',
+				// supplier: '张三',
+				listData: []
+				// testObj: {
+				// 	sname: '静态',
+				// 	dname: '动态'
+				// }
 			}
 		},
 		onLoad: function(option) {
@@ -109,44 +110,39 @@
 				return `${year}-${month}-${day}`;
 			},
 			save () {
-				let obj = {
-					items: this.listData
+				if (this.ifNoWork) {
+					return false
 				}
-				this.submit('t_BOS200000004', JSON.stringify(obj))
+				this.submit()
 			},
-			submit (SOAPAction, Data) {
+			submit (Data) {
+				this.ifNoWork = true
 				uni.showLoading({
 					title: '加载中'
 				})
-				
-				var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
-				tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
-				tmpData += '<soap:Body> '
-				tmpData += '<t_BOS200000004 xmlns="http://tempuri.org/">'
-				tmpData += "<FJSONMSG>" + Data + "</FJSONMSG>"
-				tmpData += '</t_BOS200000004>'
-				tmpData += '</soap:Body>'
-				tmpData += '</soap:Envelope>'
-				
 				uni.request({
-					url: this.urlPre,
+					url: this.urlPre + '/insertGongshi',
 					method: 'POST',
-					header: {
-						'content-Type': 'text/xml; charset=utf-8',
-						'SOAPAction': 'http://tempuri.org/' + SOAPAction
-					 },
-					dataType: 'json',
-					data: tmpData,
+					data: {items: this.listData},
 					success: (res) => {
-						let xml = res.data
-						let parser = new DOMParser()
-						let xmlDoc = parser.parseFromString(xml, 'text/xml')
-						// 提取数据
-						let Result = xmlDoc.getElementsByTagName('t_BOS200000004Response')[0].getElementsByTagName('t_BOS200000004Result')[0]
-						let HtmlStr = $(Result).html()
-						let Info = (JSON.parse(HtmlStr))[0]
-						console.log(Info)
-						uni.hideLoading()
+						switch (res.data.code) {
+							case 0:
+								uni.hideLoading()
+								uni.showToast({
+								    icon: 'success',
+								    title: '保存成功!'
+								})
+								setTimeout(() => {
+									this.ifNoWork = false
+								}, 1500)
+								break
+							  default:
+								uni.hideLoading()
+								uni.showToast({
+								    image: '/static/images/attention.png',
+								    title: '服务器繁忙!'
+								})
+						}
 					},
 					fail: (err) => {
 						console.log('request fail', err)
@@ -155,15 +151,28 @@
 							content: err.errMsg,
 							showCancel: false
 						});
-					},
-					complete: () => {
 					}
 				})
 			},
 			loadAutocompleteData(value) {
+				if (!value) {
+					return Promise.resolve([])
+				}
+				return uni.request({
+					url: this.urlPre + '/serProList?FTypeID=' + value,
+					method: 'GET'
+				}).then(ret => {
+					var [error, res] = ret
+					let Info = res.data.prolist
+					let temp = Info.map(item => {
+						return item.FInterID.toString()
+					})
+					console.log(temp)
+					return Promise.resolve(temp)
+				})
+
 			// 	let url = 'https://www.apiopen.top/journalismApi';
-			// 	return uni
-			// 		.request({
+			// 	return uni.request({
 			// 			url: url
 			// 		})
 			// 		.then(ret => {
@@ -187,8 +196,8 @@
 			// 			//console.log(Promise.resolve(retData));
 			// 			return Promise.resolve(retData);
 			// 		});
-			// 
-				return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
+			
+				// return Promise.resolve(["85023", "85044", "85047", "88136", "91167", "91496", "91497", "91501", "91502", "91503", "91508", "91510", "91526", "91527", "91655", "91706"]);
 			},
 			//响应选择事件，接收选中的数据
 			selectItemD(data) {
@@ -200,7 +209,7 @@
 				console.log('收到数据了:', data);
 			},
 			printLog() {
-				console.log(this.testObj);
+				// console.log(this.testObj);
 			}
 		}
 	}
@@ -291,6 +300,9 @@
 	.uni-input{
 		padding: 0 !important;
 	}
+	.unit-item__input{
+		border: 0 !important;
+	}
 	/* automatic */
 	.content {
 		text-align: center;
@@ -313,7 +325,6 @@
 		background-color: #fff;
 		color: #000;
 	}
-	
 	.unit-item {
 		display: flex;
 		justify-content: flex-end;

@@ -1707,8 +1707,9 @@ export default {
 	z-index: 998;
 }
 .str-auto-complete-container {
-	min-width: 15%;
-	height: auto;
+	width: 35%;
+	height: 200upx;
+	overflow-y: scroll;
 	border: 1px solid #f3f3f4;
 	position: absolute;
 	z-index: 997;

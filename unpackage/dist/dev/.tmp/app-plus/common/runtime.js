@@ -102,11 +102,11 @@
 /******/
 /******/
 /******/ 		// mini-css-extract-plugin CSS loading
-/******/ 		var cssChunks = {"components/page-foot":1};
+/******/ 		var cssChunks = {"components/page-foot":1,"components/input-autocomplete/input-autocomplete":1,"components/uni-pagination/uni-pagination":1,"components/uni-icon/uni-icon":1};
 /******/ 		if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
 /******/ 		else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
 /******/ 			promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {
-/******/ 				var href = "" + ({"components/page-foot":"components/page-foot","components/page-head":"components/page-head","components/uLink":"components/uLink"}[chunkId]||chunkId) + ".wxss";
+/******/ 				var href = "" + ({"components/page-foot":"components/page-foot","components/page-head":"components/page-head","components/uLink":"components/uLink","components/input-autocomplete/input-autocomplete":"components/input-autocomplete/input-autocomplete","components/uni-pagination/uni-pagination":"components/uni-pagination/uni-pagination","components/uni-icon/uni-icon":"components/uni-icon/uni-icon"}[chunkId]||chunkId) + ".wxss";
 /******/ 				var fullhref = __webpack_require__.p + href;
 /******/ 				var existingLinkTags = document.getElementsByTagName("link");
 /******/ 				for(var i = 0; i < existingLinkTags.length; i++) {

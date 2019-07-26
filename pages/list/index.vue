@@ -65,20 +65,21 @@
 			uniPagination
 		},
 		data() {
+			let dateEnd = this.dateToFormat(new Date())
+			let dateStart = this.getCurMonthFirstDay(new Date())
 			return {
-				dateStart: '2019-07-01',
-				dateEnd: '2019-07-25',
-				// status: 3,
+				dateStart: dateStart,
+				dateEnd: dateEnd,
 				curPage: 1,
 				pageSize: 10,
 				total: 0,
-				// curContractNo: 'XSHT002848',
-				// statusArray: ['待收料', '部分已审', '全部已审', '全部'],
 				listData: []
+				// status: 3,
+				// statusArray: ['待收料', '部分已审', '全部已审', '全部']
 			}
 		},
-		onLoad: function(option) {
-			let that = this;
+		onLoad: function() {
+			this.search()
 		},
 		computed: {
 			...mapState({
@@ -87,105 +88,64 @@
 			})
 		},
 		methods: {
+			getCurMonthFirstDay (oDate) {
+				let oYear = oDate.getFullYear()
+				let oMonth = oDate.getMonth() + 1
+				let oTime = oYear + '-' + this.getzf(oMonth) + '-' + '01'
+				return oTime
+			},
+			dateToFormat (oDate) {
+			  let oYear = oDate.getFullYear()
+			  let oMonth = oDate.getMonth() + 1
+			  let oDay = oDate.getDate()
+			  let oTime = oYear + '-' + this.getzf(oMonth) + '-' + this.getzf(oDay)
+			  return oTime
+			},
+			// 补零
+			getzf (num) {
+			  if (parseInt(num) < 10) {
+				num = '0' + num
+			  }
+			  return num
+			},
 			dateStartChange: function(e) {
 				this.dateStart = e.target.value
 			},
 			dateEndChange: function(e) {
 				this.dateEnd = e.target.value
 			},
-			// changeStatus (e) {
-			// 	this.status = e.detail.value
-			// },
 			search () {
-				this.curPage = 1
-				this.getTotal('JA_LIST')
-				this.getDataList('JA_LIST')
+				this.curPage = 
+				this.getDataList()
 			},
 			GoDetail () {
-				
 			},
 			changePage (e) {
 				this.curPage = e.current
-				this.getDataList('JA_LIST')
+				this.getDataList()
 			},
-			getTotal (SOAPAction) {
-				// uni.showLoading({
-				// 	title: '加载中'
-				// })
-				
-				var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
-				tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
-				tmpData += '<soap:Body> '
-				tmpData += '<JA_LIST  xmlns="http://tempuri.org/">'
-				tmpData += "<FSQL>exec [zz_searchBymonth_count] '" + this.userInfo.fempid + "','" + this.dateStart + "','" + this.dateEnd + "'</FSQL>"
-				tmpData += '</JA_LIST >'
-				tmpData += '</soap:Body>'
-				tmpData += '</soap:Envelope>'
-				
-				uni.request({
-					url: this.urlPre,
-					method: 'POST',
-					header: {
-						'content-Type': 'text/xml; charset=utf-8',
-						'SOAPAction': 'http://tempuri.org/' + SOAPAction
-					 },
-					dataType: 'json',
-					data: tmpData,
-					success: (res) => {
-						let xml = res.data
-						let parser = new DOMParser()
-						let xmlDoc = parser.parseFromString(xml, 'text/xml')
-						// 提取数据
-						let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
-						let HtmlStr = $(Result).html()
-						let result = JSON.parse(HtmlStr)
-						this.total = result[0].Column1
-						console.log('总条数：' + result[0].Column1)
-					},
-					fail: (err) => {
-						console.log('request fail', err)
-						uni.hideLoading()
-						uni.showModal({
-							content: err.errMsg,
-							showCancel: false
-						});
-					},
-					complete: () => {
-					}
+			getDataList () {
+				uni.showLoading({
+					title: '加载中'
 				})
-			},
-			getDataList (SOAPAction) {
-				// uni.showLoading({
-				// 	title: '加载中'
-				// })
-				
-				var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
-				tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
-				tmpData += '<soap:Body> '
-				tmpData += '<JA_LIST  xmlns="http://tempuri.org/">'
-				tmpData += "<FSQL>exec zz_searchBymonth '" + ((this.curPage - 1) * this.pageSize + 1) + "','" + this.curPage * this.pageSize + "','" + this.userInfo.fempid + "','" + this.dateStart + "','" + this.dateEnd + "'</FSQL>"
-				tmpData += '</JA_LIST >'
-				tmpData += '</soap:Body>'
-				tmpData += '</soap:Envelope>'
-				
 				uni.request({
-					url: this.urlPre,
-					method: 'POST',
-					header: {
-						'content-Type': 'text/xml; charset=utf-8',
-						'SOAPAction': 'http://tempuri.org/' + SOAPAction
-					 },
-					dataType: 'json',
-					data: tmpData,
+					url: this.urlPre + '/serGongshiList?fempid=' + this.userInfo.fempid + '&fsdate=' + this.dateStart + '&fedate=' + this.dateEnd + '&number=' + this.pageSize + '&page_num=' + this.curPage,
+					method: 'GET',
+					data: {},
 					success: (res) => {
-						let xml = res.data
-						let parser = new DOMParser()
-						let xmlDoc = parser.parseFromString(xml, 'text/xml')
-						// 提取数据
-						let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
-						let HtmlStr = $(Result).html()
-						let result = JSON.parse(HtmlStr)
-						this.listData = result
+						switch (res.data.code) {
+							case 1:
+								uni.hideLoading()
+								this.listData = res.data.list
+								this.total = res.data.gongshiCount
+								break
+							  default:
+								uni.hideLoading()
+								uni.showToast({
+								    image: '/static/images/attention.png',
+								    title: '服务器繁忙!'
+								})
+						}
 					},
 					fail: (err) => {
 						console.log('request fail', err)
@@ -194,8 +154,6 @@
 							content: err.errMsg,
 							showCancel: false
 						});
-					},
-					complete: () => {
 					}
 				})
 			}

@@ -1,0 +1,79 @@
+
+.Module{
+	width: 100vw;
+	height: 100vh;
+	background: #FFFFFF;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+}
+.ModuleWarp{
+	width: calc(100% - 40rpx);
+	padding: 20rpx;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: row;
+	    -ms-flex-direction: row;
+	        flex-direction: row;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	    -ms-flex-pack: justify;
+	        justify-content: space-between;
+}
+.ModuleItem{
+	width: 345rpx;
+	height: 345rpx;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+}
+.ModuleItem text{
+	margin-top: 60rpx;
+	margin-left: 20rpx;
+	font-size: 42rpx;
+	color: #FFFFFF;
+}
+.IconWrap{
+	width: 120rpx;
+	height: 120rpx;
+	margin-top: 20rpx;
+	margin-left: 20rpx;
+	background: #FFFFFF;
+	border-radius: 50%;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+}
+.IconWrap image{
+	width: 80rpx;
+	height: 80rpx;
+	background: #FFFFFF;
+	display: block;
+	margin: 20rpx auto;
+}
+
+
