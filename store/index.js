@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		userInfo: {fempid: ''},
-		urlPre: 'http://172.16.52.215:8081/baojiaJK',
+		urlPre: 'http://118.25.129.9:8087/baojiaJK',
 		hasLogin: false,
 		loginProvider: "",
 		openid: null

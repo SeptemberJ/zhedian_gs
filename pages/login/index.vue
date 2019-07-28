@@ -28,8 +28,8 @@
 	export default {
 		data() {
 			return {
-				username: '潘晨星', // 丁广 administrator
-				password: '11' // Zhedian@123
+				username: '', // 丁广 administrator潘晨星
+				password: '' // Zhedian@123
 			}
 		},
 		computed: {
@@ -63,7 +63,7 @@
 					title: '加载中'
 				})
 				uni.request({
-					url: this.urlPre + '/userLogin?fname='+ this.username + '&password=' + this.password,
+					url: this.urlPre + '/userLogin?fname='+ encodeURIComponent(this.username) + '&password=' + this.password,
 					// url: this.urlPre + '/userLogin?fname=潘晨星&password=11',
 					method: 'POST',
 					success: (res) => {

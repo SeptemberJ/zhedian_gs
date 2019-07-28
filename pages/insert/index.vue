@@ -11,8 +11,9 @@
 			<!-- <text style="width: 20%;">备注</text> -->
 			<text style="width: 10%;">序号</text>
 			<text style="width: 25%">日期</text>
-			<text style="width: 35%;">新项目编号</text>
-			<text style="width: 20%;">工时</text>
+			<text style="width: 20%">项目</text>
+			<text style="width: 20%;">新项目编号</text>
+			<text style="width: 15%;">工时</text>
 			<text style="width: 10%;" class="ColorWhite">删除</text>
 		</view>
 		<view class="ListBlock">
@@ -23,10 +24,11 @@
 						<picker style="width: 25%;text-align: center;" mode="date" :value="item.FDate" :data-idx="idx" :start="startDate" :end="endDate" @change="bindDateChange">
 							<view class="uni-input">{{item.FDate}}</view>
 						</picker>
-						<input-autocomplete class="unit-item__input" style="width: 35%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FBase2" v-model="item.FBase2" placeholder="请输入"
-						 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"></input-autocomplete>
-						<!-- <input v-model="item.FBase2" placeholder="请输入" style="width: 35%;text-align: center;border-bottom: 0px solid #CCCCCC;"/> -->
-						<input v-model="item.FDecimal" placeholder="请输入" style="width: 20%;text-align: center;border-bottom: 0px solid #CCCCCC;"/>
+						<input-autocomplete class="unit-item__input" style="width: 20%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FBase1Txt" v-model="item.FBase1Txt" placeholder="请输入"
+						 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1(idx)"></input-autocomplete>
+						<input-autocomplete class="unit-item__input" style="width: 20%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FBase2Txt" v-model="item.FBase2Txt" placeholder="请输入"
+						 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect="updateSelect" v-on:selectItem="selectItemD2(idx)"></input-autocomplete>
+						<input v-model="item.FDecimal" placeholder="请输入" style="width: 15%;text-align: center;border-bottom: 0px solid #CCCCCC;"/>
 						<view style="width: 10%;" @click="deleteLine(idx)">
 							<image style="width: 40upx;height: 40upx;display: block;margin: 5upx auto;" src="../../static/images/delete.png"></image>
 						</view>
@@ -52,6 +54,10 @@
 		data() {
 			return {
 				ifNoWork: false,
+				curChoosed1: '',
+				curChoosed2: '',
+				projectCurResult: [],
+				newProjectCurResult: [],
 				mohuResult: [],
 				// checkno: 'XSHT002848',
 				// dateTxt: '2019-07-28',
@@ -64,7 +70,6 @@
 			}
 		},
 		onLoad: function(option) {
-			let that = this;
 		},
 		computed: {
 			...mapState({
@@ -83,8 +88,11 @@
 				this.listData.push({
 					FDate: this.getDate({format: true}),
 					FEmp: this.userInfo.fempid,
+					FBase2Txt: '',
 					FBase2: '',
-					FDecimal: ''
+					FDecimal: '',
+					FBase1Txt: '',
+					FBase1: ''
 				})
 			},
 			deleteLine (idx) {
@@ -113,6 +121,7 @@
 				if (this.ifNoWork) {
 					return false
 				}
+				// console.log(this.listData[0])
 				this.submit()
 			},
 			submit (Data) {
@@ -132,6 +141,11 @@
 								    icon: 'success',
 								    title: '保存成功!'
 								})
+								this.listData = []
+								this.curChoosed1 = ''
+								this.curChoosed2 = ''
+								this.projectCurResult = []
+								this.mohuResult = ''
 								setTimeout(() => {
 									this.ifNoWork = false
 								}, 1500)
@@ -154,55 +168,65 @@
 					}
 				})
 			},
-			loadAutocompleteData(value) {
+			loadAutocompleteData1 (value) {
+				var this_ = this
 				if (!value) {
 					return Promise.resolve([])
 				}
 				return uni.request({
-					url: this.urlPre + '/serProList?FTypeID=' + value,
+					url: 'http://118.25.129.9:8087/baojiaJK/serFitemList?fname=' + encodeURIComponent(value),
+					method: 'GET'
+				}).then(ret => {
+					var [error, res] = ret
+					let Info = res.data.itmelist
+					this.$emit('updateSelect1', Info)
+					let temp = Info.map(item => {
+						return item.FName.toString()
+					})
+					return Promise.resolve(temp)
+				})
+			},
+			loadAutocompleteData2 (value) {
+				if (!value) {
+					return Promise.resolve([])
+				}
+				return uni.request({
+					url: 'http://118.25.129.9:8087/baojiaJK/serProList?FID=' + value,
 					method: 'GET'
 				}).then(ret => {
 					var [error, res] = ret
 					let Info = res.data.prolist
+					this.$emit('updateSelect', Info)
 					let temp = Info.map(item => {
-						return item.FInterID.toString()
+						return item.FID.toString()
 					})
-					console.log(temp)
 					return Promise.resolve(temp)
 				})
-
-			// 	let url = 'https://www.apiopen.top/journalismApi';
-			// 	return uni.request({
-			// 			url: url
-			// 		})
-			// 		.then(ret => {
-			// 			var [error, res] = ret;
-			// 			console.log(res);
-			// 			let data = (((res || {}).data || {}).data || {}).toutiao || [];
-			// 			if (data.length <= 0) {
-			// 				return Promise.resolve(['没有数据...']);
-			// 			}
-			// 
-			// 			let retData = [];
-			// 			for (let it of data) {
-			// 				// console.log(it);
-			// 				retData.push({
-			// 					//自定义数据对象必须要有text属性
-			// 					text: it.title,
-			// 					//其它字段根据业务需要添加
-			// 					digest: it.digest
-			// 				});
-			// 			}
-			// 			//console.log(Promise.resolve(retData));
-			// 			return Promise.resolve(retData);
-			// 		});
-			
-				// return Promise.resolve(["85023", "85044", "85047", "88136", "91167", "91496", "91497", "91501", "91502", "91503", "91508", "91510", "91526", "91527", "91655", "91706"]);
+			},
+			updateSelect1 (list) {
+				this.projectCurResult = list
+			},
+			updateSelect (list) {
+				this.newProjectCurResult = list
+			},
+			checkProjectName(item) {
+				return item.FName == this.curChoosed1
+			},
+			checkNewProject(item) {
+				return item.FID == this.curChoosed2
+			},
+			selectItemD1(idx) {
+				//选择事件
+				this.curChoosed1 = this.listData[idx].FBase1Txt
+				let temp = this.projectCurResult.filter(this.checkProjectName)[0]
+				this.listData[idx].FBase1 = temp.FItemID
 			},
 			//响应选择事件，接收选中的数据
-			selectItemD(data) {
+			selectItemD2(idx) {
 				//选择事件
-				console.log('收到数据了:', data);
+				this.curChoosed2 = this.listData[idx].FBase2Txt
+				let temp = this.newProjectCurResult.filter(this.checkNewProject)[0]
+				this.listData[idx].FBase2 = temp.FInterID
 			},
 			selectItemS(data) {
 				//选择事件
@@ -298,7 +322,8 @@
 		background: #e64340;
 	}
 	.uni-input{
-		padding: 0 !important;
+		padding-left: 0px !important;
+		padding-right: 0px !important;
 	}
 	.unit-item__input{
 		border: 0 !important;
