@@ -1721,4 +1721,7 @@ export default {
 		z-index: 999
 	}
 }
+.uni-input-placeholder{
+	text-align: left !important;
+}
 </style>

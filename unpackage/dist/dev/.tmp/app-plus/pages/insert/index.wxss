@@ -16,14 +16,22 @@
 .TopInfo{
 	width: 100%;
 	padding: 20rpx 0;
-	height: 100rpx;
+	/* height: 100upx; */
 }
-.TopInfo text{
-	width: calc(50% - 20rpx);
+.TopInfo .item{
+	width: calc(100% - 20rpx);
 	padding-left: 20rpx;
-	text-align: left;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+	/* text-align: left;
 	float: left;
-	color: #333333;
+	color: #333333; */
 }
 .ListColumn{
 	width: 100%;

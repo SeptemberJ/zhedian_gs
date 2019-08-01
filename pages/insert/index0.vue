@@ -17,6 +17,9 @@
 				<input-autocomplete class="unit-item__input" style="width: 70%;display: inline-block;text-align: left;border-bottom: 1px solid #000000;" :value="FBase2Txt" v-model="FBase2Txt" placeholder="请输入"
 				 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect2="updateSelect2" v-on:selectItem="selectItemD2"></input-autocomplete>
 			</view>
+			
+			<!-- <text>项目：{{checkno}}</text>
+			<text>新项目编号：{{dateTxt}}</text> -->
 		</view>
 		<view class="ListColumn">
 			<!-- <text style="width: 20%;">项目</text> -->
@@ -42,8 +45,9 @@
 						 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1(idx)"></input-autocomplete>
 						<input-autocomplete class="unit-item__input" style="width: 20%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FBase2Txt" v-model="item.FBase2Txt" placeholder="请输入"
 						 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect="updateSelect" v-on:selectItem="selectItemD2(idx)"></input-autocomplete> -->
-						<input-autocomplete class="unit-item__input" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.fname" v-model="item.fname" placeholder="请输入"
-						 highlightColor="#FF0000" :loadData="loadAutocompleteData3" v-on:updateSelect3="updateSelect3" v-on:selectItem="selectItemEmp(idx)"></input-autocomplete>
+						<!-- <input-autocomplete class="unit-item__input" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FEmp" v-model="item.FEmp" placeholder="请输入"
+						 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1(idx)"></input-autocomplete> -->
+						<input v-model="item.FEmp" placeholder="请输入" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;"/>
 						<input v-model="item.FDecimal" placeholder="请输入" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;"/>
 						<view style="width: 10%;" @click="deleteLine(idx)">
 							<image style="width: 40upx;height: 40upx;display: block;margin: 5upx auto;" src="../../static/images/delete.png"></image>
@@ -79,8 +83,7 @@
 				FBase2: '',
 				projectCurResult: [],
 				newProjectCurResult: [],
-				empCurResult: [],
-				// mohuResult: [],
+				mohuResult: [],
 				listData: []
 			}
 		},
@@ -102,7 +105,6 @@
 			AddLine () {
 				this.listData.push({
 					// FDate: this.getDate({format: true}),
-					fname: '',
 					FEmp: '',
 					// FBase2Txt: '',
 					// FBase2: '',
@@ -136,14 +138,8 @@
 				if (this.ifNoWork) {
 					return false
 				}
-				let obj = {
-					FDate: this.FDate,
-					FBase1: this.FBase1,
-					FBase2: this.FBase2,
-					FBase3: this.userInfo.fempid,
-					items: this.listData
-				}
-				this.submit(obj)
+				// console.log(this.listData[0])
+				this.submit()
 			},
 			submit (Data) {
 				this.ifNoWork = true
@@ -153,7 +149,7 @@
 				uni.request({
 					url: this.urlPre + '/insertGongshi',
 					method: 'POST',
-					data: Data,
+					data: {items: this.listData},
 					success: (res) => {
 						switch (res.data.code) {
 							case 0:
@@ -165,15 +161,8 @@
 								this.listData = []
 								this.curChoosed1 = ''
 								this.curChoosed2 = ''
-								this.curChoosed3 = ''
-								this.FBase1Txt = ''
-								this.FBase2Txt = ''
-								this.FBase1 = ''
-								this.FBase2 = ''
 								this.projectCurResult = []
-								this.newProjectCurResult = []
-								this.empCurResult = []
-								// this.mohuResult = ''
+								this.mohuResult = ''
 								setTimeout(() => {
 									this.ifNoWork = false
 								}, 1500)
@@ -184,7 +173,6 @@
 								    image: '/static/images/attention.png',
 								    title: '服务器繁忙!'
 								})
-								this.ifNoWork = false
 						}
 					},
 					fail: (err) => {
@@ -232,40 +220,20 @@
 					return Promise.resolve(temp)
 				})
 			},
-			loadAutocompleteData3 (value) {
-				if (!value) {
-					return Promise.resolve([])
-				}
-				return uni.request({
-					url: 'http://118.25.129.9:8087/baojiaJK/serEmpList?fname=' + encodeURIComponent(value),
-					method: 'GET'
-				}).then(ret => {
-					var [error, res] = ret
-					let Info = res.data.emplist
-					this.$emit('updateSelect3', Info)
-					let temp = Info.map(item => {
-						return item.fname.toString()
-					})
-					return Promise.resolve(temp)
-				})
-			},
 			updateSelect1 (list) {
+				debugger
+				console.log('list--------')
+				console.log(list)
 				this.projectCurResult = list
 			},
 			updateSelect2 (list) {
 				this.newProjectCurResult = list
-			},
-			updateSelect3 (list) {
-				this.empCurResult = list
 			},
 			checkProjectName(item) {
 				return item.FName == this.curChoosed1
 			},
 			checkNewProject(item) {
 				return item.FID == this.curChoosed2
-			},
-			checkProjecEmp(item) {
-				return item.fname == this.curChoosed3
 			},
 			selectItemD1(data) {
 				//选择事件
@@ -277,7 +245,7 @@
 				// this.FBase1 = temp.FItemID
 			},
 			//响应选择事件，接收选中的数据
-			selectItemD2(data) {
+			selectItemD2() {
 				//选择事件
 				this.curChoosed2 = data
 				let temp = this.newProjectCurResult.filter(this.checkNewProject)[0]
@@ -285,9 +253,9 @@
 			},
 			selectItemEmp(idx) {
 				//选择事件
-				this.curChoosed3 = this.listData[idx].fname
-				let temp = this.empCurResult.filter(this.checkProjecEmp)[0]
-				this.listData[idx].FEmp = temp.fitemid
+				// this.curChoosed1 = this.listData[idx].FBase1Txt
+				let temp = this.projectCurResult.filter(this.checkProjectName)[0]
+				this.FBase1 = temp.FItemID
 			},
 			selectItemS(data) {
 				//选择事件
