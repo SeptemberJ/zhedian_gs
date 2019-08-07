@@ -115,7 +115,7 @@
 				this.dateEnd = e.target.value
 			},
 			search () {
-				this.curPage = 
+				this.curPage = 1
 				this.getDataList()
 			},
 			GoDetail () {

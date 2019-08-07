@@ -28,8 +28,8 @@
 	export default {
 		data() {
 			return {
-				username: '', // 丁广 administrator潘晨星
-				password: '' // Zhedian@123
+				username: '01', // 丁广 administrator潘晨星
+				password: '1' // Zhedian@123
 			}
 		},
 		computed: {

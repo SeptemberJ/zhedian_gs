@@ -10,12 +10,12 @@
 			<view class="item">
 				项目：
 				<input-autocomplete class="unit-item__input" style="width: 70%;display: inline-block;text-align: left;border-bottom: 1px solid #000000;" :value="FBase1Txt" v-model="FBase1Txt" placeholder="请输入"
-				 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1"></input-autocomplete>
+				 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1" v-on:Blur="blurProjectName"></input-autocomplete>
 			</view>
 			<view class="item">
 				新项目编号：
 				<input-autocomplete class="unit-item__input" style="width: 70%;display: inline-block;text-align: left;border-bottom: 1px solid #000000;" :value="FBase2Txt" v-model="FBase2Txt" placeholder="请输入"
-				 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect2="updateSelect2" v-on:selectItem="selectItemD2"></input-autocomplete>
+				 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect2="updateSelect2" v-on:selectItem="selectItemD2" v-on:Blur="blurNewProject"></input-autocomplete>
 			</view>
 		</view>
 		<view class="ListColumn">
@@ -42,8 +42,8 @@
 						 highlightColor="#FF0000" :loadData="loadAutocompleteData1" v-on:updateSelect1="updateSelect1" v-on:selectItem="selectItemD1(idx)"></input-autocomplete>
 						<input-autocomplete class="unit-item__input" style="width: 20%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.FBase2Txt" v-model="item.FBase2Txt" placeholder="请输入"
 						 highlightColor="#FF0000" :loadData="loadAutocompleteData2" v-on:updateSelect="updateSelect" v-on:selectItem="selectItemD2(idx)"></input-autocomplete> -->
-						<input-autocomplete class="unit-item__input" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;" :value="item.fname" v-model="item.fname" placeholder="请输入"
-						 highlightColor="#FF0000" :loadData="loadAutocompleteData3" v-on:updateSelect3="updateSelect3" v-on:selectItem="selectItemEmp(idx)"></input-autocomplete>
+						<input-autocomplete class="unit-item__input" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;"  :idx="idx" :value="item.fname" v-model="item.fname" placeholder="请输入"
+						 highlightColor="#FF0000" :loadData="loadAutocompleteData3" v-on:updateSelect3="updateSelect3" v-on:selectItem="selectItemEmp(idx)" v-on:Blur="blurEMP" v-on:setIputIdx="setIputIdx"></input-autocomplete>
 						<input v-model="item.FDecimal" placeholder="请输入" style="width: 40%;text-align: center;border-bottom: 0px solid #CCCCCC;"/>
 						<view style="width: 10%;" @click="deleteLine(idx)">
 							<image style="width: 40upx;height: 40upx;display: block;margin: 5upx auto;" src="../../static/images/delete.png"></image>
@@ -70,8 +70,12 @@
 		data() {
 			return {
 				ifNoWork: false,
+				hasSelect: false,
 				curChoosed1: '',
 				curChoosed2: '',
+				curChoosed3: '',
+				empInputTxt: '',
+				curEmpIdx: '',
 				FDate: this.getDate({format: true}),
 				FBase1Txt: '',
 				FBase2Txt: '',
@@ -136,6 +140,29 @@
 				if (this.ifNoWork) {
 					return false
 				}
+				if (!this.FBase1) {
+					uni.showToast({
+					    image: '/static/images/attention.png',
+					    title: '请选择项目!'
+					})
+					return false
+				}
+				if (!this.FBase2) {
+					uni.showToast({
+					    image: '/static/images/attention.png',
+					    title: '请选择项目编号!'
+					})
+					return false
+				}
+				this.listData.map(item => {
+					if (!item.FEmp || !item.FDecimal) {
+						uni.showToast({
+						    image: '/static/images/attention.png',
+						    title: '填写不完整!'
+						})
+						return false
+					}
+				})
 				let obj = {
 					FDate: this.FDate,
 					FBase1: this.FBase1,
@@ -144,6 +171,8 @@
 					items: this.listData
 				}
 				this.submit(obj)
+				// console.log('FBase1--------------------')
+				// console.log(this.listData[0])
 			},
 			submit (Data) {
 				this.ifNoWork = true
@@ -203,7 +232,7 @@
 					return Promise.resolve([])
 				}
 				return uni.request({
-					url: 'http://118.25.129.9:8087/baojiaJK/serFitemList?fname=' + encodeURIComponent(value),
+					url: 'http://10.206.0.201:8081/baojiaJK/serFitemList?fname=' + encodeURIComponent(value),
 					method: 'GET'
 				}).then(ret => {
 					var [error, res] = ret
@@ -220,7 +249,7 @@
 					return Promise.resolve([])
 				}
 				return uni.request({
-					url: 'http://118.25.129.9:8087/baojiaJK/serProList?FID=' + value,
+					url: 'http://10.206.0.201:8081/baojiaJK/serProList?FID=' + value,
 					method: 'GET'
 				}).then(ret => {
 					var [error, res] = ret
@@ -237,7 +266,7 @@
 					return Promise.resolve([])
 				}
 				return uni.request({
-					url: 'http://118.25.129.9:8087/baojiaJK/serEmpList?fname=' + encodeURIComponent(value),
+					url: 'http://10.206.0.201:8081/baojiaJK/serEmpList?fname=' + encodeURIComponent(value),
 					method: 'GET'
 				}).then(ret => {
 					var [error, res] = ret
@@ -270,11 +299,8 @@
 			selectItemD1(data) {
 				//选择事件
 				this.curChoosed1 = data
-				console.log(this.curChoosed1)
-				console.log(this.projectCurResult)
-				// let temp = this.projectCurResult.filter(this.checkProjectName)[0]
-				// 
-				// this.FBase1 = temp.FItemID
+				let temp = this.projectCurResult.filter(this.checkProjectName)[0]
+				this.FBase1 = temp.FItemID
 			},
 			//响应选择事件，接收选中的数据
 			selectItemD2(data) {
@@ -284,10 +310,62 @@
 				this.FBase2 = temp.FInterID
 			},
 			selectItemEmp(idx) {
+				console.log('selectItemEmp--------')
+				this.hasSelect = true
 				//选择事件
 				this.curChoosed3 = this.listData[idx].fname
 				let temp = this.empCurResult.filter(this.checkProjecEmp)[0]
 				this.listData[idx].FEmp = temp.fitemid
+			},
+			blurProjectName (value) {
+				if (value && !this.FBase1) {
+					uni.showToast({
+					    image: '/static/images/attention.png',
+					    title: '该项目不存在!'
+					})
+					this.FBase1Txt = ''
+				}
+			},
+			blurNewProject (value) {
+				if (value && !this.FBase1) {
+					uni.showToast({
+					    image: '/static/images/attention.png',
+					    title: '该编号不存在!'
+					})
+					this.FBase2Txt = ''
+				}
+			},
+			checkProjecEmpInput(item) {
+				console.log('this.empInputTxt--', this.empInputTxt)
+				return item.fname == this.empInputTxt
+			},
+			setIputIdx (idx) {
+				this.hasSelect = false
+				this.curEmpIdx = idx
+			},
+			blurEMP (value) {
+				console.log('blurEMP-------------')
+				console.log(value)
+				// console.log(this.curChoosed3)
+				this.empInputTxt = value ? value : this.listData[this.curEmpIdx].fname
+				if (!this.hasSelect) { // 当前没有选择
+					let temp = this.empCurResult.filter(this.checkProjecEmpInput)[0]
+					console.log(temp)
+					if (!temp && value) {
+						uni.showToast({
+						    image: '/static/images/attention.png',
+						    title: '该员工不存在!'
+						})
+						this.listData[this.curEmpIdx].fname = ''
+						this.listData[this.curEmpIdx].FEmp = ''
+					}
+					if (temp && value) {
+						this.listData[this.curEmpIdx].fname = temp.fname
+						this.listData[this.curEmpIdx].FEmp = temp.fitemid
+					}
+				} else {
+					console.log('else-----------')
+				}
 			},
 			selectItemS(data) {
 				//选择事件

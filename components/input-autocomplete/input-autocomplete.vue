@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @focus="onInput" @input="onInput" autocomplete="off" />
+		<input class="uni-input" :data-idx="idx" :placeholder="placeholder" :value="value" @blur="onBlur" @focus="onInput" @input="onInput" autocomplete="off" />
 		<view class="str-auto-complete-container" v-if="isShow">
 			<view class="str-auto-complete-mask" @tap="onMaskTap"></view>
 			<view v-for="(item, index) in showList" :key="index" class="str-auto-complete-item" @tap="selectThisItem(item)" v-html="item.showString"></view>
@@ -16,6 +16,9 @@ export default {
 		},
 		value: {
 			event: 'input'
+		},
+		idx: {
+			type: String
 		},
 		placeholder: {
 			type: String
@@ -1469,8 +1472,14 @@ export default {
 		defultLoadData(value) {
 			return Promise.resolve(this.srcDataList);
 		},
+		onBlur(event) {
+			let value = event.target.value;
+			this.$emit('Blur', value);
+		},
 		onInput(event) {
 			let value = event.target.value;
+			let idx = event.target.dataset.idx;
+			this.$emit('setIputIdx', idx);
 			this.$emit('input', value);
 			this.curInputValue = value;
 
